@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewPro — Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --indigo: #4F46E5; --indigo-dark: #3730A3; --indigo-hover: #4338CA;
+            --indigo-light: #EEF2FF; --emerald: #10B981; --rose: #EF4444;
+            --rose-light: #FEF2F2; --rose-border: #FECACA;
+            --slate-50: #F8FAFC; --slate-100: #F1F5F9; --slate-200: #E2E8F0;
+            --slate-300: #CBD5E1; --slate-400: #94A3B8; --slate-500: #64748B;
+            --slate-600: #475569; --slate-700: #334155; --slate-800: #1E293B; --slate-900: #0F172A;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--slate-50); min-height: 100vh; display: flex; color: var(--slate-800); -webkit-font-smoothing: antialiased; }
+
+        /* LEFT */
+        .left { width: 400px; flex-shrink: 0; background: var(--slate-900); position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 48px 40px; }
+        .lp-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(79,70,229,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(79,70,229,0.12) 1px, transparent 1px); background-size: 40px 40px; }
+        .lp-glow { position: absolute; width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, rgba(79,70,229,0.3) 0%, transparent 68%); top: -120px; right: -140px; pointer-events: none; }
+        .lp-glow2 { position: absolute; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 68%); bottom: -80px; left: -80px; pointer-events: none; }
+        .lp-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-ico { width: 42px; height: 42px; background: var(--indigo); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; }
+        .brand-name { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 700; color: white; letter-spacing: -0.02em; }
+        .hero { margin: 52px 0 40px; }
+        .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #818CF8; background: rgba(79,70,229,0.15); border: 1px solid rgba(79,70,229,0.3); display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; margin-bottom: 18px; }
+        .hero h1 { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 900; line-height: 1.1; color: white; letter-spacing: -0.03em; margin-bottom: 14px; }
+        .hero h1 em { font-style: normal; color: #818CF8; }
+        .hero p { color: var(--slate-500); font-size: 14px; line-height: 1.7; }
+        .roles { display: flex; flex-direction: column; gap: 10px; }
+        .role-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; }
+        .rr-ico { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+        .rr-ico.i { background: rgba(79,70,229,0.2); color: #818CF8; }
+        .rr-ico.e { background: rgba(16,185,129,0.2); color: #34D399; }
+        .rr-ico.a { background: rgba(245,158,11,0.2); color: #FCD34D; }
+        .rr-txt strong { display: block; color: white; font-size: 13px; font-weight: 600; }
+        .rr-txt span { color: var(--slate-500); font-size: 12px; }
+
+        /* RIGHT */
+        .right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 32px; overflow-y: auto; }
+        .card { width: 100%; max-width: 420px; }
+        .card h2 { font-family: 'Fraunces', serif; font-size: 27px; font-weight: 900; color: var(--slate-900); letter-spacing: -0.03em; margin-bottom: 4px; }
+        .card .sub { color: var(--slate-500); font-size: 14px; margin-bottom: 26px; }
+
+        /* Alert */
+        .alert { display: none; align-items: flex-start; gap: 12px; padding: 13px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 13px; line-height: 1.5; animation: adown 0.2s ease; }
+        @keyframes adown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+        .alert.show { display: flex; }
+        .alert.error { background: var(--rose-light); border: 1px solid var(--rose-border); color: #B91C1C; }
+        .alert.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #15803D; }
+        .alert i { margin-top: 1px; flex-shrink: 0; font-size: 15px; }
+
+        /* Role picker */
+        .pick-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate-500); margin-bottom: 10px; }
+        .pick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        .pr { display: none; }
+        .pc { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 13px 8px; border: 1.5px solid var(--slate-200); border-radius: 8px; cursor: pointer; transition: all 0.15s; background: white; text-align: center; }
+        .pc:hover { border-color: var(--indigo); background: var(--indigo-light); }
+        .pr:checked + .pc { border-color: var(--indigo); background: var(--indigo-light); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
+        .pr:checked + .pc .pi, .pr:checked + .pc .pn { color: var(--indigo); }
+        .pi { font-size: 17px; color: var(--slate-400); transition: color 0.15s; }
+        .pn { font-size: 12px; font-weight: 600; color: var(--slate-600); transition: color 0.15s; }
+
+        /* Fields */
+        .fg { margin-bottom: 15px; }
+        .fg > label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate-500); margin-bottom: 7px; }
+        .fg > label .opt { font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--slate-400); }
+        .iw { position: relative; }
+        .iw .ii { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 13px; pointer-events: none; }
+        .iw input, .iw select { width: 100%; padding: 11px 14px 11px 40px; border: 1.5px solid var(--slate-200); border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--slate-800); background: white; outline: none; transition: border-color 0.15s, box-shadow 0.15s; appearance: none; }
+        .iw input::placeholder { color: var(--slate-300); }
+        .iw input:focus, .iw select:focus { border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        .iw input.err, .iw select.err { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(239,68,68,0.08); }
+        .eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--slate-400); cursor: pointer; padding: 4px; font-size: 13px; }
+        .eye:hover { color: var(--slate-600); }
+        .ferr { display: none; font-size: 12px; color: var(--rose); margin-top: 5px; align-items: center; gap: 5px; }
+        .ferr.on { display: flex; }
+
+        /* Strength */
+        .str { margin-top: 8px; }
+        .sbars { display: flex; gap: 4px; margin-bottom: 5px; }
+        .sbar { flex: 1; height: 3px; border-radius: 2px; background: var(--slate-200); transition: background 0.25s; }
+        .stxt { font-size: 11px; color: var(--slate-400); font-weight: 500; }
+
+        /* Conditional */
+        .cf { display: none; }
+        .cf.on { display: block; }
+
+        /* Button */
+        .btn { width: 100%; padding: 13px; background: var(--indigo); color: white; border: none; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s, box-shadow 0.15s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; letter-spacing: -0.01em; }
+        .btn:hover { background: var(--indigo-hover); box-shadow: 0 4px 16px rgba(79,70,229,0.35); }
+        .btn:active { transform: scale(0.99); }
+        .btn .sp { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn.ld .sp { display: block; }
+        .btn.ld .bl { opacity: 0.6; }
+        .si { text-align: center; font-size: 13px; color: var(--slate-500); margin-top: 18px; }
+        .si a { color: var(--indigo); font-weight: 700; text-decoration: none; }
+        .si a:hover { text-decoration: underline; }
+
+        @media (max-width: 820px) { .left { display: none; } .right { padding: 32px 20px; } }
+    </style>
+</head>
+<body>
+
+<div class="left">
+    <div class="lp-grid"></div>
+    <div class="lp-glow"></div>
+    <div class="lp-glow2"></div>
+    <div class="lp-inner">
+        <div class="brand">
+            <div class="brand-ico"><i class="fas fa-calendar-check"></i></div>
+            <span class="brand-name">InterviewPro</span>
+        </div>
+        <div class="hero">
+            <div class="eyebrow"><i class="fas fa-bolt"></i> AI-Powered Scheduling</div>
+            <h1>Smart interviews,<br><em>zero conflicts</em></h1>
+            <p>Join teams using InterviewPro to automate scheduling, reduce no-shows, and hire faster.</p>
+        </div>
+        <div class="roles">
+            <div class="role-row">
+                <div class="rr-ico i"><i class="fas fa-shield-halved"></i></div>
+                <div class="rr-txt"><strong>Admin</strong><span>Full system access &amp; team management</span></div>
+            </div>
+            <div class="role-row">
+                <div class="rr-ico e"><i class="fas fa-user-tie"></i></div>
+                <div class="rr-txt"><strong>Interviewer</strong><span>Set availability &amp; conduct interviews</span></div>
+            </div>
+            <div class="role-row">
+                <div class="rr-ico a"><i class="fas fa-user-graduate"></i></div>
+                <div class="rr-txt"><strong>Candidate</strong><span>Track progress &amp; interview status</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="right">
+    <div class="card">
+        <h2>Create Account</h2>
+        <p class="sub">Fill in your details to get started.</p>
+
+        <div class="alert" id="alertBox">
+            <i id="alertIcon"></i>
+            <span id="alertText"></span>
+        </div>
+
+        <form id="regForm" novalidate>
+            <div class="pick-label">I am a</div>
+            <div class="pick-grid">
+                <div><input type="radio" name="role" id="rA" class="pr" value="0">
+                    <label for="rA" class="pc"><span class="pi"><i class="fas fa-shield-halved"></i></span><span class="pn">Admin</span></label></div>
+                <div><input type="radio" name="role" id="rI" class="pr" value="1">
+                    <label for="rI" class="pc"><span class="pi"><i class="fas fa-user-tie"></i></span><span class="pn">Interviewer</span></label></div>
+                <div><input type="radio" name="role" id="rC" class="pr" value="2" checked>
+                    <label for="rC" class="pc"><span class="pi"><i class="fas fa-user-graduate"></i></span><span class="pn">Candidate</span></label></div>
+            </div>
+
+            <div class="fg">
+                <label>Full Name</label>
+                <div class="iw"><i class="ii fas fa-user"></i><input type="text" id="fName" placeholder="Jane Doe"></div>
+                <div class="ferr" id="nameErr"><i class="fas fa-circle-exclamation"></i> Full name is required.</div>
+            </div>
+
+            <div class="fg">
+                <label>Email Address</label>
+                <div class="iw"><i class="ii fas fa-envelope"></i><input type="email" id="fEmail" placeholder="you@company.com"></div>
+                <div class="ferr" id="emailErr"><i class="fas fa-circle-exclamation"></i> Enter a valid email address.</div>
+            </div>
+
+            <div class="fg">
+                <label>Password</label>
+                <div class="iw">
+                    <i class="ii fas fa-lock"></i>
+                    <input type="password" id="fPwd" placeholder="Min. 6 characters">
+                    <button type="button" class="eye" id="eyeBtn"><i class="fas fa-eye" id="eyeIco"></i></button>
+                </div>
+                <div class="str">
+                    <div class="sbars"><div class="sbar" id="sb1"></div><div class="sbar" id="sb2"></div><div class="sbar" id="sb3"></div><div class="sbar" id="sb4"></div></div>
+                    <span class="stxt" id="stxt">Enter a password</span>
+                </div>
+                <div class="ferr" id="pwdErr"><i class="fas fa-circle-exclamation"></i> Password must be at least 6 characters.</div>
+            </div>
+
+            <div class="fg cf" id="deptWrap">
+                <label>Department</label>
+                <div class="iw"><i class="ii fas fa-building"></i>
+                    <select id="fDept">
+                        <option value="">Select department…</option>
+                        <option>Engineering</option><option>Product</option><option>Design</option>
+                        <option>Data Science</option><option>Marketing</option>
+                        <option>Human Resources</option><option>Finance</option><option>Operations</option>
+                    </select>
+                </div>
+                <div class="ferr" id="deptErr"><i class="fas fa-circle-exclamation"></i> Please select a department.</div>
+            </div>
+
+            <div class="fg cf" id="resumeWrap">
+                <label>Portfolio / Resume Link <span class="opt">(optional)</span></label>
+                <div class="iw"><i class="ii fas fa-link"></i><input type="url" id="fResume" placeholder="https://linkedin.com/in/yourprofile"></div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                <div class="sp"></div>
+                <span class="bl"><i class="fas fa-user-plus"></i>&nbsp; Create Account</span>
+            </button>
+        </form>
+
+        <div class="si">Already have an account? <a href="login.html">Sign in</a></div>
+    </div>
+</div>
+
+<script>
+    function applyRole(v) {
+        document.getElementById('deptWrap').classList.toggle('on', v === '1');
+        document.getElementById('resumeWrap').classList.toggle('on', v === '2');
+    }
+    document.querySelectorAll('.pr').forEach(r => r.addEventListener('change', () => applyRole(r.value)));
+    applyRole(document.querySelector('.pr:checked').value);
+
+    document.getElementById('eyeBtn').addEventListener('click', () => {
+        const i = document.getElementById('fPwd');
+        const isT = i.type === 'text';
+        i.type = isT ? 'password' : 'text';
+        document.getElementById('eyeIco').className = isT ? 'fas fa-eye' : 'fas fa-eye-slash';
+    });
+
+    document.getElementById('fPwd').addEventListener('input', function () {
+        const v = this.value, c = ['','#EF4444','#F59E0B','#10B981','#10B981'], l = ['','Weak','Fair','Good','Strong'];
+        let s = 0;
+        if (v.length >= 6) s++;
+        if (v.length >= 10) s++;
+        if (/[A-Z]/.test(v) && /[0-9]/.test(v)) s++;
+        if (/[^A-Za-z0-9]/.test(v)) s++;
+        for (let i = 1; i <= 4; i++) document.getElementById('sb' + i).style.background = i <= s ? c[s] : '';
+        const t = document.getElementById('stxt');
+        t.textContent = v ? (l[s] || 'Very Weak') : 'Enter a password';
+        t.style.color = v ? c[s] : '';
+    });
+
+    function showAlert(type, msg) {
+        const b = document.getElementById('alertBox');
+        b.className = 'alert ' + type + ' show';
+        document.getElementById('alertIcon').className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        document.getElementById('alertText').textContent = msg;
+        b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearErrs() {
+        document.querySelectorAll('.ferr').forEach(e => e.classList.remove('on'));
+        document.querySelectorAll('.err').forEach(e => e.classList.remove('err'));
+        document.getElementById('alertBox').classList.remove('show');
+    }
+
+    function markErr(iId, eId) {
+        const i = document.getElementById(iId), e = document.getElementById(eId);
+        if (i) i.classList.add('err');
+        if (e) e.classList.add('on');
+    }
+
+    document.getElementById('regForm').addEventListener('submit', async function (ev) {
+        ev.preventDefault();
+        clearErrs();
+
+        const name  = document.getElementById('fName').value.trim();
+        const email = document.getElementById('fEmail').value.trim();
+        const pwd   = document.getElementById('fPwd').value;
+        const rv    = document.querySelector('.pr:checked').value;
+        const role  = parseInt(rv, 10);
+        const dept  = role === 1 ? document.getElementById('fDept').value.trim() : '';
+        const res   = role === 2 ? document.getElementById('fResume').value.trim() : '';
+
+        let ok = true;
+        if (!name)                             { markErr('fName',  'nameErr');  ok = false; }
+        if (!email || !/\S+@\S+\.\S+/.test(email)) { markErr('fEmail', 'emailErr'); ok = false; }
+        if (!pwd || pwd.length < 6)            { markErr('fPwd',   'pwdErr');   ok = false; }
+        if (role === 1 && !dept)               { markErr('fDept',  'deptErr');  ok = false; }
+        if (!ok) return;
+
+        const btn = document.getElementById('submitBtn');
+        btn.classList.add('ld'); btn.disabled = true;
+
+        const payload = { name, email, password: pwd, role };
+        if (role === 1 && dept) payload.department = dept;
+        if (role === 2 && res)  payload.resumeLink  = res;
+
+        try {
+            const r = await fetch('/api/Auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            let data = {};
+            try { data = await r.json(); } catch (_) {}
+
+            if (r.ok) {
+                showAlert('success', 'Account created! Redirecting to sign in…');
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            } else {
+                const msg = data.message
+                    || (data.errors ? Object.values(data.errors).flat().join(' ') : null)
+                    || data.title || 'Registration failed. Please try again.';
+                showAlert('error', msg);
+                btn.classList.remove('ld'); btn.disabled = false;
+            }
+        } catch (_) {
+            showAlert('error', 'Cannot connect to server. Please check the backend is running.');
+            btn.classList.remove('ld'); btn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

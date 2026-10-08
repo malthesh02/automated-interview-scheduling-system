@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewPro - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════
+         SIDEBAR
+    ════════════════════════════════════════ -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="fas fa-calendar-check"></i>
+            <h2>InterviewPro</h2>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home"></i><span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="interviews">
+                <i class="fas fa-calendar-alt"></i><span>Interviews</span>
+            </a>
+            <a href="#" class="nav-item" data-page="candidates">
+                <i class="fas fa-users"></i><span>Candidates</span>
+            </a>
+            <a href="#" class="nav-item" data-page="interviewers">
+                <i class="fas fa-user-tie"></i><span>Interviewers</span>
+            </a>
+            <a href="#" class="nav-item" data-page="availability">
+                <i class="fas fa-clock"></i><span>Availability</span>
+            </a>
+            <a href="#" class="nav-item" data-page="conflicts">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Conflicts</span>
+                <span class="nav-badge" id="conflictNavBadge" style="display:none">0</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i><span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i><span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img id="sbAvatar" src="https://ui-avatars.com/api/?name=Admin+User&background=667eea&color=fff" alt="User">
+                <div>
+                    <p class="user-name" id="sbName">Admin User</p>
+                    <p class="user-role" id="sbRole">Administrator</p>
+                </div>
+            </div>
+            <a href="#" class="logout-btn" id="logoutBtn" title="Sign Out">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT
+    ════════════════════════════════════════ -->
+    <div class="main-content">
+
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search interviews, candidates..." id="globalSearch">
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="header-btn" id="notifBtn" title="Conflicts">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="conflictBadge" style="display:none">0</span>
+                </button>
+                <button class="btn-primary" id="topScheduleBtn">
+                    <i class="fas fa-plus"></i> Schedule Interview
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Container -->
+        <div class="page-container" id="pageContainer">
+
+            <!-- ── DASHBOARD (default active page) ── -->
+            <div class="page-content active" id="dashboard">
+                <div class="page-header">
+                    <h1>Dashboard Overview</h1>
+                    <p id="dashGreet">Welcome back! Here's what's happening today.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statTotal">—</h3>
+                            <p>Total Interviews</p>
+                        </div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statCandidates">—</h3>
+                            <p>Candidates</p>
+                        </div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statToday">—</h3>
+                            <p>Today's Interviews</p>
+                        </div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statConflicts">—</h3>
+                            <p>Conflicts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Interview Trends (Last 7 Days)</h3>
+                        </div>
+                        
+                        <div style="position:relative; height:260px;">
+                            <canvas id="interviewChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Status Breakdown</h3>
+                        </div>
+                        
+                        <div style="position:relative; height:260px;">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <div class="card-header">
+                        <h3>Recent Interviews</h3>
+                        <a href="#" class="view-all" onclick="navigateTo('interviews');return false;">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Interviewer</th>
+                                    <th>Date &amp; Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashRecentBody">
+                                <tr><td colspan="5" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- end #dashboard -->
+
+            <!-- ── INTERVIEWS PAGE ── -->
+            <div class="page-content" id="interviews">
+                <div class="page-header">
+                    <h1>Interviews</h1>
+                    <button class="btn-primary" onclick="openScheduleModalWithData()">
+                        <i class="fas fa-plus"></i> Schedule Interview
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Candidate</th><th>Interviewer</th>
+                                <th>Date &amp; Time</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interviewsBody">
+                            <tr><td colspan="6" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── CANDIDATES PAGE ── -->
+            <div class="page-content" id="candidates">
+                <div class="page-header">
+                    <h1>Candidates</h1>
+                    <button class="btn-primary" onclick="openModal('addCandidateModal')">
+                        <i class="fas fa-user-plus"></i> Add Candidate
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Email</th><th>Status</th><th>Resume</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidatesBody">
+                            <tr><td colspan="5" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── INTERVIEWERS PAGE ── -->
+            <div class="page-content" id="interviewers">
+                <div class="page-header">
+                    <h1>Interviewers</h1>
+                    <button class="btn-primary" onclick="openModal('addInterviewerModal')">
+                        <i class="fas fa-user-tie"></i> Add Interviewer
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Email</th><th>Department</th><th>Interviews</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interviewersBody">
+                            <tr><td colspan="5" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── AVAILABILITY PAGE ── -->
+            <div class="page-content" id="availability">
+                <div class="page-header">
+                    <h1>Availability</h1>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Interviewer</th><th>Date</th><th>Start</th><th>End</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="availabilityBody">
+                            <tr><td colspan="5" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── CONFLICTS PAGE ── -->
+            <div class="page-content" id="conflicts">
+                <div class="page-header">
+                    <h1>Conflicts</h1>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Description</th><th>Detected At</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="conflictsBody">
+                            <tr><td colspan="5" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── ANALYTICS PAGE ── -->
+            <div class="page-content" id="analytics">
+                <div class="page-header">
+                    <h1>Analytics</h1>
+                    <p>Interview performance and scheduling insights</p>
+                </div>
+                <div class="analytics-grid">
+                    <div class="analytic-card">
+                        <div class="ac-label">Total Scheduled</div>
+                        <div class="ac-val" id="anTotal">—</div>
+                        <div class="ac-delta" id="anTotalDelta"></div>
+                    </div>
+                    <div class="analytic-card">
+                        <div class="ac-label">Completion Rate</div>
+                        <div class="ac-val" id="anRate">—</div>
+                        <div class="ac-delta">vs last month</div>
+                    </div>
+                    <div class="analytic-card">
+                        <div class="ac-label">Avg. Per Day</div>
+                        <div class="ac-val" id="anAvg">—</div>
+                        <div class="ac-delta">last 30 days</div>
+                    </div>
+                    <div class="analytic-card">
+                        <div class="ac-label">Conflicts Detected</div>
+                        <div class="ac-val" id="anConflicts">—</div>
+                        <div class="ac-delta" style="color:#EF4444">requires attention</div>
+                    </div>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="card-header"><h3>Monthly Interviews</h3></div>
+                        <canvas id="monthlyChart" style="max-height:260px"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header"><h3>By Department</h3></div>
+                        <canvas id="deptChart" style="max-height:260px"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SETTINGS PAGE ── -->
+            <div class="page-content" id="settings">
+                <div class="page-header"><h1>Settings</h1></div>
+                <div class="settings-layout">
+                    <div class="settings-menu">
+                        <div class="settings-menu-item active" data-tab="profile"><i class="fas fa-user"></i> Profile</div>
+                        <div class="settings-menu-item" data-tab="notifications"><i class="fas fa-bell"></i> Notifications</div>
+                        <div class="settings-menu-item" data-tab="security"><i class="fas fa-shield-alt"></i> Security</div>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-tab active" id="settings-profile">
+                            <div class="settings-section-title">Profile Settings</div>
+                            <div class="settings-section-sub">Manage your account information and preferences.</div>
+                            <div class="settings-field"><label>Full Name</label><input type="text" id="settingsName" placeholder="Your name"></div>
+                            <div class="settings-field"><label>Email Address</label><input type="email" id="settingsEmail" placeholder="you@company.com"></div>
+                            <div class="settings-field"><label>Role</label><input type="text" id="settingsRole" placeholder="—" disabled style="background:#F8FAFC;color:#64748B"></div>
+                            <button class="btn-primary" onclick="saveProfileSettings()" style="margin-top:8px"><i class="fas fa-save"></i> Save Changes</button>
+                        </div>
+                        <div class="settings-tab" id="settings-notifications">
+                            <div class="settings-section-title">Notification Preferences</div>
+                            <div class="settings-section-sub">Configure how and when you receive notifications.</div>
+                            <div class="settings-toggle-row">
+                                <div class="st-label"><strong>Email Notifications</strong><span>Receive interview alerts via email</span></div>
+                                <label class="toggle-sw"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="settings-toggle-row">
+                                <div class="st-label"><strong>Scheduling Reminders</strong><span>24h reminder before interviews</span></div>
+                                <label class="toggle-sw"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="settings-toggle-row">
+                                <div class="st-label"><strong>Conflict Alerts</strong><span>Instant alerts when conflicts are detected</span></div>
+                                <label class="toggle-sw"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="settings-toggle-row">
+                                <div class="st-label"><strong>Weekly Summary</strong><span>Weekly digest of interview activity</span></div>
+                                <label class="toggle-sw"><input type="checkbox"><span class="toggle-slider"></span></label>
+                            </div>
+                        </div>
+                        <div class="settings-tab" id="settings-security">
+                            <div class="settings-section-title">Security</div>
+                            <div class="settings-section-sub">Update your password and manage session security.</div>
+                            <div class="settings-field"><label>Current Password</label><input type="password" placeholder="Enter current password"></div>
+                            <div class="settings-field"><label>New Password</label><input type="password" placeholder="Min. 6 characters"></div>
+                            <div class="settings-field"><label>Confirm New Password</label><input type="password" placeholder="Repeat new password"></div>
+                            <button class="btn-primary" style="margin-top:8px"><i class="fas fa-lock"></i> Update Password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end #pageContainer -->
+    </div><!-- end .main-content -->
+
+    <!-- ═══════════════════════════════════════
+         MODAL: Schedule Interview
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="scheduleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Schedule Interview</h3>
+                <button class="modal-close" onclick="closeModal('scheduleModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Candidate</label>
+                    <select id="mCand" class="form-control">
+                        <option value="">— Select Candidate —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Interviewer</label>
+                    <select id="mIr" class="form-control">
+                        <option value="">— Select Interviewer —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Interview Date</label>
+                    <input type="date" id="mDate" class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="mStart" class="form-control" value="10:00">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="mEnd" class="form-control" value="11:00">
+                    </div>
+                </div>
+                <div class="form-error" id="mErr" style="display:none"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('scheduleModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitSchedule()">
+                    <i class="fas fa-check"></i> Schedule
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODAL: Add Candidate
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="addCandidateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add Candidate</h3>
+                <button class="modal-close" onclick="closeModal('addCandidateModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="newCandName" class="form-control" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="newCandEmail" class="form-control" placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password (for login)</label>
+                    <input type="password" id="newCandPassword" class="form-control" placeholder="Min 6 characters">
+                </div>
+                <div class="form-group">
+                    <label>Resume Link <span class="optional">(optional)</span></label>
+                    <input type="url" id="newCandResume" class="form-control" placeholder="https://...">
+                </div>
+                <div class="form-error" id="candErr" style="display:none"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addCandidateModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitAddCandidate()">
+                    <i class="fas fa-user-plus"></i> Add Candidate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODAL: Add Interviewer
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="addInterviewerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-tie"></i> Add Interviewer</h3>
+                <button class="modal-close" onclick="closeModal('addInterviewerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="newIrName" class="form-control" placeholder="Jane Smith">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="newIrEmail" class="form-control" placeholder="jane@company.com">
+                </div>
+                <div class="form-group">
+                    <label>Password (for login)</label>
+                    <input type="password" id="newIrPassword" class="form-control" placeholder="Min 6 characters">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" id="newIrDept" class="form-control" placeholder="Engineering, HR, Product...">
+                </div>
+                <div class="form-error" id="irErr" style="display:none"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addInterviewerModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitAddInterviewer()">
+                    <i class="fas fa-user-plus"></i> Add Interviewer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODAL: Update Candidate Status
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="statusModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Update Status</h3>
+                <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="statusCandId">
+                <div class="form-group">
+                    <label>New Status</label>
+                    <select id="statusVal" class="form-control">
+                        <option value="0">Applied</option>
+                        <option value="1">Shortlisted</option>
+                        <option value="2">Rejected</option>
+                        <option value="3">Hired</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('statusModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitStatusUpdate()">
+                    <i class="fas fa-save"></i> Update
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODAL: Add Availability
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="availModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-clock"></i> Add Availability Slot</h3>
+                <button class="modal-close" onclick="closeModal('availModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="availIrId">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="availDate" class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="availStart" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="availEnd" class="form-control">
+                    </div>
+                </div>
+                <div class="form-error" id="availErr" style="display:none"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('availModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitAvailability()">
+                    <i class="fas fa-plus"></i> Add Slot
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODAL: Resolve Conflict
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="resolveModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> Resolve Conflict</h3>
+                <button class="modal-close" onclick="closeModal('resolveModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="resolveId">
+                <div class="form-group">
+                    <label>Resolution Notes</label>
+                    <textarea id="resolveNotes" class="form-control" rows="4"
+                        placeholder="Describe how this conflict was resolved..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('resolveModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitResolve()">
+                    <i class="fas fa-check"></i> Resolve
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODAL: View Interview Details
+    ════════════════════════════════════════ -->
+    <div class="modal-overlay hidden" id="viewModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3><i class="fas fa-eye"></i> Interview Details</h3>
+                <button class="modal-close" onclick="closeModal('viewModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="viewModalBody">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('viewModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+    <!-- Toast Notification -->
+    <div id="toast"><i id="toastIcon" class="fas fa-check-circle"></i><span id="toastMsg">Done!</span></div>
+</body>
+</html>
